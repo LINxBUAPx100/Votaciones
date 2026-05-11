@@ -39,6 +39,14 @@
         <header class="text-center mb-14 border-b border-slate-700 pb-8">
             <h1 class="text-4xl md:text-5xl font-extrabold text-white tracking-tight mb-4">Resultados de Evaluación</h1>
             <p class="text-slate-400 text-lg max-w-2xl mx-auto">Análisis completo y feedback anónimo sobre el estado actual de la administración.</p>
+            
+            <div class="mt-6 inline-flex items-center justify-center px-5 py-2 bg-slate-800/80 border border-slate-600 rounded-full shadow-lg backdrop-blur-sm">
+                <span class="relative flex h-3 w-3 mr-3">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-3 w-3 bg-accent"></span>
+                </span>
+                <span class="text-slate-300 font-medium tracking-wide">Total de votos registrados: <span id="total-votos" class="text-white font-bold text-xl ml-1">0</span></span>
+            </div>
         </header>
 
         <div id="loader" class="flex flex-col justify-center items-center py-20">
@@ -123,7 +131,7 @@
     </div>
 
     <script>
-        // URL exportada a CSV - ¡Asegúrate de que el documento esté "Publicado en la Web"!
+        // URL exportada a CSV
         const sheetId = '1PwLM9V8EVoAuQaOuSC_s84fvCX3obu2Ueh83RcZpGsk';
         const csvUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv`;
 
@@ -131,7 +139,7 @@
         Chart.defaults.color = '#94a3b8'; // text-slate-400
         Chart.defaults.font.family = 'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont';
 
-        // Índices de columnas (basados en la estructura que compartiste)
+        // Índices de columnas
         const cols = {
             responsabilidad: 2,
             satisfaccion: 3,
@@ -160,7 +168,12 @@
             complete: function(results) {
                 const data = results.data;
                 data.shift(); // Quitar cabecera
-                procesarDatos(data.filter(row => row.length > 5)); // Solo procesar filas con datos
+                const validRows = data.filter(row => row.length > 5);
+                
+                // Actualizar el contador de votos en el HTML
+                document.getElementById('total-votos').innerText = validRows.length;
+
+                procesarDatos(validRows);
             },
             error: function(err) {
                 document.getElementById('loader').innerHTML = '<p class="text-red-500 font-bold p-4 bg-red-900/50 rounded-lg">Error de conexión. Verifica que el Google Sheet esté "Publicado en la Web".</p>';
@@ -207,7 +220,7 @@
             const mejorasHtml = areasMejora.length ? areasMejora.map(t => `<div class="bg-slate-800/50 p-3 rounded border-l-4 border-yellow-500 text-sm">${t}</div>`).join('') : '<p class="text-slate-500">Sin datos registrados.</p>';
             document.getElementById('lista-mejoras').innerHTML = mejorasHtml;
 
-            // --- 2. Evaluación Individual (Sí / No / Anulo) ---
+            // --- 2. Evaluación Individual ---
             const grid = document.getElementById('admin-grid');
             administradores.forEach(admin => {
                 let si = 0, no = 0, anulo = 0, feedbacks = [];
@@ -221,7 +234,7 @@
                     if(comentario && comentario.length > 2) feedbacks.push(comentario);
                 });
 
-                const totalValidos = si + no; // Aprobación solo se calcula entre los que tomaron postura
+                const totalValidos = si + no;
                 const porcentaje = totalValidos > 0 ? Math.round((si / totalValidos) * 100) : 0;
                 let colorPorcentaje = porcentaje >= 50 ? 'text-success' : 'text-danger';
                 if(totalValidos === 0) colorPorcentaje = 'text-slate-400';
@@ -277,7 +290,7 @@
 
         function renderPieChart(id, data, colors) {
             const keys = Object.keys(data);
-            if(keys.length === 0) return; // Canvas vacío si no hay datos
+            if(keys.length === 0) return;
             new Chart(document.getElementById(id).getContext('2d'), {
                 type: 'doughnut',
                 data: {
@@ -294,7 +307,7 @@
 
         function renderBarChart(id, data, color, sortDesc) {
             let keys = Object.keys(data);
-            if(sortDesc) keys.sort((a, b) => data[b] - data[a]); // Ordenar de mayor a menor votos
+            if(sortDesc) keys.sort((a, b) => data[b] - data[a]);
 
             if(keys.length === 0) return;
             new Chart(document.getElementById(id).getContext('2d'), {
@@ -315,7 +328,7 @@
         }
 
         function renderAdminChart(id, si, no, anulo) {
-            if(si === 0 && no === 0 && anulo === 0) { si=1; no=1; anulo=1; } // Placeholder
+            if(si === 0 && no === 0 && anulo === 0) { si=1; no=1; anulo=1; }
             new Chart(document.getElementById(id).getContext('2d'), {
                 type: 'doughnut',
                 data: {
