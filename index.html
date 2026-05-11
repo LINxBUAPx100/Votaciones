@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resultados de Administración</title>
+    <title>Resultados de Administración Jinetes</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
@@ -13,46 +13,109 @@
             theme: {
                 extend: {
                     colors: {
-                        dark: '#111827',
-                        card: '#1F2937',
-                        accent: '#3B82F6'
+                        dark: '#0f172a',
+                        card: '#1e293b',
+                        accent: '#3b82f6',
+                        success: '#10b981',
+                        danger: '#ef4444',
+                        neutral: '#64748b'
                     }
                 }
             }
         }
     </script>
     <style>
-        /* Custom scrollbar para los comentarios */
         .scrollbar-thin::-webkit-scrollbar { width: 6px; }
-        .scrollbar-thin::-webkit-scrollbar-track { background: #374151; border-radius: 4px; }
-        .scrollbar-thin::-webkit-scrollbar-thumb { background: #4B5563; border-radius: 4px; }
-        .scrollbar-thin::-webkit-scrollbar-thumb:hover { background: #6B7280; }
+        .scrollbar-thin::-webkit-scrollbar-track { background: #334155; border-radius: 4px; }
+        .scrollbar-thin::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+        .scrollbar-thin::-webkit-scrollbar-thumb:hover { background: #64748b; }
+        /* Efecto de cristal para tarjetas de texto */
+        .glass-card { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); }
     </style>
 </head>
-<body class="bg-dark text-gray-200 font-sans antialiased min-h-screen">
+<body class="bg-dark text-slate-200 font-sans antialiased min-h-screen pb-20">
 
     <div class="max-w-7xl mx-auto px-4 py-10">
-        <header class="text-center mb-12">
-            <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight mb-4">Resultados de Evaluación</h1>
-            <p class="text-gray-400 text-lg max-w-2xl mx-auto">Datos generales de aprobación y feedback anónimo sobre la administración actual.</p>
+        <header class="text-center mb-14 border-b border-slate-700 pb-8">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-white tracking-tight mb-4">Resultados de Evaluación</h1>
+            <p class="text-slate-400 text-lg max-w-2xl mx-auto">Análisis completo y feedback anónimo sobre el estado actual de la administración.</p>
         </header>
 
-        <div id="loader" class="flex justify-center items-center py-20">
-            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-accent"></div>
+        <div id="loader" class="flex flex-col justify-center items-center py-20">
+            <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-accent mb-4"></div>
+            <p class="text-slate-400 animate-pulse">Obteniendo respuestas en tiempo real...</p>
         </div>
 
-        <div id="dashboard" class="hidden space-y-12">
+        <div id="dashboard" class="hidden space-y-16">
             
-            <section class="bg-card rounded-2xl p-6 shadow-xl border border-gray-700">
-                <h2 class="text-2xl font-semibold text-white mb-6">¿Quiénes deberían poner orden a la administración?</h2>
-                <div class="relative h-80 w-full">
-                    <canvas id="ordenChart"></canvas>
+            <section>
+                <div class="flex items-center mb-6">
+                    <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center mr-3 shadow-lg shadow-blue-500/30"><svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg></div>
+                    <h2 class="text-3xl font-bold text-white">Evaluación General</h2>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                    <div class="bg-card p-6 rounded-2xl shadow-lg border border-slate-700">
+                        <h3 class="text-sm text-slate-400 uppercase tracking-wide font-semibold mb-4">Decisiones con Responsabilidad</h3>
+                        <div class="relative h-48 w-full"><canvas id="chart-responsabilidad"></canvas></div>
+                    </div>
+                    <div class="bg-card p-6 rounded-2xl shadow-lg border border-slate-700">
+                        <h3 class="text-sm text-slate-400 uppercase tracking-wide font-semibold mb-4">Satisfacción de Aportación</h3>
+                        <div class="relative h-48 w-full"><canvas id="chart-satisfaccion"></canvas></div>
+                    </div>
+                    <div class="bg-card p-6 rounded-2xl shadow-lg border border-slate-700">
+                        <h3 class="text-sm text-slate-400 uppercase tracking-wide font-semibold mb-4">Nivel de Transparencia (1-5)</h3>
+                        <div class="relative h-48 w-full"><canvas id="chart-transparencia"></canvas></div>
+                    </div>
+                    <div class="bg-card p-6 rounded-2xl shadow-lg border border-slate-700">
+                        <h3 class="text-sm text-slate-400 uppercase tracking-wide font-semibold mb-4">Fomento de Participación</h3>
+                        <div class="relative h-48 w-full"><canvas id="chart-participacion"></canvas></div>
+                    </div>
+                </div>
+
+                <div class="bg-card rounded-2xl shadow-lg border border-slate-700 p-6">
+                    <h3 class="text-lg text-white font-bold mb-4 flex items-center">
+                        <svg class="w-5 h-5 mr-2 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                        Áreas principales que necesitan mejora
+                    </h3>
+                    <div id="lista-mejoras" class="space-y-3 max-h-60 overflow-y-auto scrollbar-thin pr-2">
+                        </div>
                 </div>
             </section>
 
             <section>
-                <h2 class="text-2xl font-semibold text-white mb-6">Aprobación Individual y Feedback</h2>
+                <div class="flex items-center mb-6">
+                    <div class="w-8 h-8 bg-purple-500 rounded-lg flex items-center justify-center mr-3 shadow-lg shadow-purple-500/30"><svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg></div>
+                    <h2 class="text-3xl font-bold text-white">Permanencia en la Administración</h2>
+                </div>
                 <div id="admin-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    </div>
+            </section>
+
+            <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="bg-card rounded-2xl p-6 shadow-lg border border-slate-700">
+                    <div class="flex items-center mb-6">
+                        <div class="w-8 h-8 bg-teal-500 rounded-lg flex items-center justify-center mr-3 shadow-lg shadow-teal-500/30"><svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg></div>
+                        <h2 class="text-2xl font-bold text-white">Segundas Oportunidades</h2>
+                    </div>
+                    <div class="relative h-72 w-full"><canvas id="chart-oportunidades"></canvas></div>
+                </div>
+
+                <div class="bg-card rounded-2xl p-6 shadow-lg border border-slate-700">
+                    <div class="flex items-center mb-6">
+                        <div class="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center mr-3 shadow-lg shadow-orange-500/30"><svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"></path></svg></div>
+                        <h2 class="text-2xl font-bold text-white">¿Quién debe poner orden?</h2>
+                    </div>
+                    <div class="relative h-72 w-full"><canvas id="chart-orden"></canvas></div>
+                </div>
+            </section>
+
+            <section>
+                <div class="flex items-center mb-6">
+                    <div class="w-8 h-8 bg-pink-500 rounded-lg flex items-center justify-center mr-3 shadow-lg shadow-pink-500/30"><svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg></div>
+                    <h2 class="text-3xl font-bold text-white">Opiniones Abiertas</h2>
+                </div>
+                <div id="grid-opiniones" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     </div>
             </section>
 
@@ -60,12 +123,26 @@
     </div>
 
     <script>
-        // URL pública exportada a CSV de tu Google Sheet
+        // URL exportada a CSV - ¡Asegúrate de que el documento esté "Publicado en la Web"!
         const sheetId = '1PwLM9V8EVoAuQaOuSC_s84fvCX3obu2Ueh83RcZpGsk';
-        const csvUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv`;
+        const csvUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv`;
 
-        // Nombres basados en tus columnas (índices correspondientes en el CSV)
-        // Estructura: { nombre, index_aprobacion, index_feedback }
+        // Configuración de Chart.js
+        Chart.defaults.color = '#94a3b8'; // text-slate-400
+        Chart.defaults.font.family = 'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont';
+
+        // Índices de columnas (basados en la estructura que compartiste)
+        const cols = {
+            responsabilidad: 2,
+            satisfaccion: 3,
+            transparencia: 4,
+            participacion: 5,
+            mejoras: 6,
+            oportunidad: 23,
+            op1: 24, op2: 25, op3: 26,
+            orden: 27
+        };
+
         const administradores = [
             { id: 'AR', name: 'AR', colAprob: 7, colFeedback: 8 },
             { id: 'SARHAY', name: 'Sarhay', colAprob: 9, colFeedback: 10 },
@@ -77,178 +154,178 @@
             { id: 'RODRIGO', name: 'Rodrigo', colAprob: 21, colFeedback: 22 },
         ];
 
-        // Índice de la pregunta "¿Quienes deberian poner orden a la administración?"
-        const colOrden = 27;
-
         Papa.parse(csvUrl, {
             download: true,
             header: false,
             complete: function(results) {
                 const data = results.data;
-                // Eliminar la fila 0 (Cabeceras)
-                data.shift(); 
-                
-                procesarDatos(data);
+                data.shift(); // Quitar cabecera
+                procesarDatos(data.filter(row => row.length > 5)); // Solo procesar filas con datos
             },
             error: function(err) {
-                console.error("Error al cargar los datos:", err);
-                document.getElementById('loader').innerHTML = '<p class="text-red-500">Error al cargar los datos. Verifica que el enlace sea público.</p>';
+                document.getElementById('loader').innerHTML = '<p class="text-red-500 font-bold p-4 bg-red-900/50 rounded-lg">Error de conexión. Verifica que el Google Sheet esté "Publicado en la Web".</p>';
             }
         });
 
         function procesarDatos(rows) {
-            // Filtrar filas vacías
-            const validRows = rows.filter(row => row.length > 5);
+            // Helpers
+            const getFrequencies = (index) => rows.reduce((acc, row) => {
+                let val = (row[index] || '').trim();
+                if(val) acc[val] = (acc[val] || 0) + 1;
+                return acc;
+            }, {});
 
-            // 1. Procesar "Quienes deberían poner orden"
-            const ordenVotes = {};
-            validRows.forEach(row => {
-                if(row[colOrden]) {
-                    // Separar por comas por si seleccionaron múltiples (checkboxes)
-                    const selecciones = row[colOrden].split(',').map(s => s.trim());
-                    selecciones.forEach(sel => {
-                        if(sel) {
-                            ordenVotes[sel] = (ordenVotes[sel] || 0) + 1;
-                        }
+            const getCommaFrequencies = (index) => rows.reduce((acc, row) => {
+                if(row[index]) {
+                    row[index].split(',').forEach(item => {
+                        let val = item.trim();
+                        if(val) acc[val] = (acc[val] || 0) + 1;
                     });
                 }
-            });
+                return acc;
+            }, {});
 
-            renderOrdenChart(ordenVotes);
+            const getTexts = (...indices) => {
+                let texts = [];
+                rows.forEach(row => {
+                    indices.forEach(idx => {
+                        let val = (row[idx] || '').trim();
+                        if(val && val.length > 2) texts.push(val);
+                    });
+                });
+                return texts;
+            };
 
-            // 2. Procesar evaluaciones individuales
+            // --- 1. Gráficas Generales ---
+            renderPieChart('chart-responsabilidad', getFrequencies(cols.responsabilidad), ['#3b82f6', '#ef4444', '#f59e0b', '#64748b']);
+            renderPieChart('chart-satisfaccion', getFrequencies(cols.satisfaccion), ['#10b981', '#ef4444']);
+            renderBarChart('chart-transparencia', getFrequencies(cols.transparencia), '#8b5cf6', false);
+            renderPieChart('chart-participacion', getFrequencies(cols.participacion), ['#3b82f6', '#8b5cf6', '#f59e0b', '#ef4444']);
+
+            // Lista de mejoras
+            const areasMejora = getTexts(cols.mejoras);
+            const mejorasHtml = areasMejora.length ? areasMejora.map(t => `<div class="bg-slate-800/50 p-3 rounded border-l-4 border-yellow-500 text-sm">${t}</div>`).join('') : '<p class="text-slate-500">Sin datos registrados.</p>';
+            document.getElementById('lista-mejoras').innerHTML = mejorasHtml;
+
+            // --- 2. Evaluación Individual (Sí / No / Anulo) ---
             const grid = document.getElementById('admin-grid');
-            
             administradores.forEach(admin => {
-                let si = 0;
-                let no = 0;
-                let feedbacks = [];
-
-                validRows.forEach(row => {
+                let si = 0, no = 0, anulo = 0, feedbacks = [];
+                rows.forEach(row => {
                     const voto = (row[admin.colAprob] || '').trim().toLowerCase();
                     if(voto === 'sí' || voto === 'si' || voto === 'yes') si++;
-                    if(voto === 'no') no++;
+                    else if(voto === 'no') no++;
+                    else if(voto.includes('anulo')) anulo++;
 
                     const comentario = (row[admin.colFeedback] || '').trim();
-                    if(comentario && comentario.length > 2) {
-                        feedbacks.push(comentario);
-                    }
+                    if(comentario && comentario.length > 2) feedbacks.push(comentario);
                 });
 
-                // Crear tarjeta
-                const card = document.createElement('div');
-                card.className = 'bg-card rounded-2xl p-5 shadow-lg border border-gray-700 flex flex-col';
-                
-                // Porcentaje de aprobación
-                const total = si + no;
-                const porcentaje = total > 0 ? Math.round((si / total) * 100) : 0;
-                const colorClase = porcentaje >= 50 ? 'text-green-400' : 'text-red-400';
+                const totalValidos = si + no; // Aprobación solo se calcula entre los que tomaron postura
+                const porcentaje = totalValidos > 0 ? Math.round((si / totalValidos) * 100) : 0;
+                let colorPorcentaje = porcentaje >= 50 ? 'text-success' : 'text-danger';
+                if(totalValidos === 0) colorPorcentaje = 'text-slate-400';
 
+                const card = document.createElement('div');
+                card.className = 'bg-card rounded-2xl p-5 shadow-lg border border-slate-700 flex flex-col hover:border-slate-500 transition-colors duration-300';
                 card.innerHTML = `
-                    <div class="flex justify-between items-center mb-4">
+                    <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-700/50">
                         <h3 class="text-xl font-bold text-white">${admin.name}</h3>
-                        <span class="text-sm font-bold px-2 py-1 bg-gray-800 rounded-md ${colorClase}">${porcentaje}% Aprob.</span>
+                        <span class="text-xs font-bold px-2 py-1 bg-slate-800 rounded-md ${colorPorcentaje}">${porcentaje}% Aprob.</span>
                     </div>
-                    <div class="relative w-full h-40 mb-4">
+                    <div class="relative w-full h-40 mb-5">
                         <canvas id="chart-${admin.id}"></canvas>
                     </div>
-                    <div class="mt-auto">
-                        <h4 class="text-sm text-gray-400 uppercase tracking-wide mb-2 font-semibold">Feedback Anónimo:</h4>
+                    <div class="mt-auto bg-slate-900/50 rounded-lg p-3">
+                        <h4 class="text-xs text-slate-400 uppercase tracking-wide mb-2 font-semibold">Feedback:</h4>
                         <div class="space-y-2 max-h-32 overflow-y-auto scrollbar-thin pr-2">
-                            ${feedbacks.length > 0 ? feedbacks.map(f => `
-                                <div class="bg-gray-800 rounded p-2 text-sm text-gray-300">
-                                    "${f}"
-                                </div>
-                            `).join('') : '<p class="text-xs text-gray-500 italic">Sin comentarios</p>'}
+                            ${feedbacks.length > 0 ? feedbacks.map(f => `<div class="bg-slate-800 rounded p-2 text-sm italic text-slate-300 border-l-2 border-slate-600">"${f}"</div>`).join('') : '<p class="text-xs text-slate-500">Sin comentarios</p>'}
                         </div>
                     </div>
                 `;
                 grid.appendChild(card);
-
-                // Renderizar gráfica de dona
-                renderDoughnut(`chart-${admin.id}`, si, no);
+                renderAdminChart(`chart-${admin.id}`, si, no, anulo);
             });
 
-            // Ocultar loader y mostrar dashboard
+            // --- 3. Segundas oportunidades y Orden ---
+            renderBarChart('chart-oportunidades', getCommaFrequencies(cols.oportunidad), '#14b8a6', true);
+            renderBarChart('chart-orden', getCommaFrequencies(cols.orden), '#f97316', true);
+
+            // --- 4. Opiniones Abiertas ---
+            const opiniones = getTexts(cols.op1, cols.op2, cols.op3);
+            const opGrid = document.getElementById('grid-opiniones');
+            if(opiniones.length === 0) {
+                opGrid.innerHTML = '<p class="text-slate-500 col-span-full text-center py-10">Aún no hay opiniones generales registradas.</p>';
+            } else {
+                opiniones.forEach(op => {
+                    const div = document.createElement('div');
+                    div.className = 'glass-card p-5 rounded-xl border border-slate-700 shadow-md text-slate-300 relative overflow-hidden group hover:border-pink-500/50 transition-colors';
+                    div.innerHTML = `
+                        <svg class="absolute top-2 left-2 w-8 h-8 text-slate-700/30 transform -scale-x-100 group-hover:text-pink-500/10 transition-colors" fill="currentColor" viewBox="0 0 24 24"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/></svg>
+                        <p class="relative z-10 text-sm leading-relaxed pt-2 pl-2">${op}</p>
+                    `;
+                    opGrid.appendChild(div);
+                });
+            }
+
+            // Mostrar el dashboard
             document.getElementById('loader').classList.add('hidden');
             document.getElementById('dashboard').classList.remove('hidden');
         }
 
-        // --- Funciones de Chart.js ---
+        // --- Funciones de renderizado de gráficas ---
 
-        // Configuración global para gráficas oscuras
-        Chart.defaults.color = '#9CA3AF';
-        Chart.defaults.font.family = 'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont';
-
-        function renderOrdenChart(data) {
-            const ctx = document.getElementById('ordenChart').getContext('2d');
-            
-            // Ordenar de mayor a menor
-            const labels = Object.keys(data).sort((a, b) => data[b] - data[a]);
-            const values = labels.map(label => data[label]);
-
-            new Chart(ctx, {
-                type: 'bar',
+        function renderPieChart(id, data, colors) {
+            const keys = Object.keys(data);
+            if(keys.length === 0) return; // Canvas vacío si no hay datos
+            new Chart(document.getElementById(id).getContext('2d'), {
+                type: 'doughnut',
                 data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Votos',
-                        data: values,
-                        backgroundColor: '#3B82F6',
-                        borderRadius: 4,
-                        barThickness: 'flex',
-                        maxBarThickness: 40
-                    }]
+                    labels: keys,
+                    datasets: [{ data: Object.values(data), backgroundColor: colors, borderWidth: 0 }]
                 },
                 options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false }
-                    },
+                    responsive: true, maintainAspectRatio: false,
+                    cutout: '65%',
+                    plugins: { legend: { position: 'right', labels: { color: '#cbd5e1', font: {size: 11} } } }
+                }
+            });
+        }
+
+        function renderBarChart(id, data, color, sortDesc) {
+            let keys = Object.keys(data);
+            if(sortDesc) keys.sort((a, b) => data[b] - data[a]); // Ordenar de mayor a menor votos
+
+            if(keys.length === 0) return;
+            new Chart(document.getElementById(id).getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: keys,
+                    datasets: [{ label: 'Votos', data: keys.map(k => data[k]), backgroundColor: color, borderRadius: 4 }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
                     scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: { color: '#374151' },
-                            ticks: { stepSize: 1 }
-                        },
-                        x: {
-                            grid: { display: false }
-                        }
+                        y: { beginAtZero: true, ticks: { stepSize: 1, color: '#94a3b8' }, grid: { color: '#334155' } },
+                        x: { ticks: { color: '#cbd5e1' }, grid: { display: false } }
                     }
                 }
             });
         }
 
-        function renderDoughnut(canvasId, si, no) {
-            const ctx = document.getElementById(canvasId).getContext('2d');
-            
-            if (si === 0 && no === 0) {
-                // Estado vacío si nadie ha votado
-                si = 1; no = 1; 
-            }
-
-            new Chart(ctx, {
+        function renderAdminChart(id, si, no, anulo) {
+            if(si === 0 && no === 0 && anulo === 0) { si=1; no=1; anulo=1; } // Placeholder
+            new Chart(document.getElementById(id).getContext('2d'), {
                 type: 'doughnut',
                 data: {
-                    labels: ['Sí', 'No'],
-                    datasets: [{
-                        data: [si, no],
-                        backgroundColor: ['#10B981', '#EF4444'],
-                        borderWidth: 0,
-                        hoverOffset: 4
-                    }]
+                    labels: ['Sí', 'No', 'Anulado'],
+                    datasets: [{ data: [si, no, anulo], backgroundColor: ['#10b981', '#ef4444', '#64748b'], borderWidth: 0 }]
                 },
                 options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
+                    responsive: true, maintainAspectRatio: false,
                     cutout: '70%',
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: { boxWidth: 12, padding: 10 }
-                        }
-                    }
+                    plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, padding: 10, color: '#cbd5e1' } } }
                 }
             });
         }
