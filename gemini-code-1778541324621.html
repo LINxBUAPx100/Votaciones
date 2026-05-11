@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultados de Administración</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        dark: '#111827',
+                        card: '#1F2937',
+                        accent: '#3B82F6'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom scrollbar para los comentarios */
+        .scrollbar-thin::-webkit-scrollbar { width: 6px; }
+        .scrollbar-thin::-webkit-scrollbar-track { background: #374151; border-radius: 4px; }
+        .scrollbar-thin::-webkit-scrollbar-thumb { background: #4B5563; border-radius: 4px; }
+        .scrollbar-thin::-webkit-scrollbar-thumb:hover { background: #6B7280; }
+    </style>
+</head>
+<body class="bg-dark text-gray-200 font-sans antialiased min-h-screen">
+
+    <div class="max-w-7xl mx-auto px-4 py-10">
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight mb-4">Resultados de Evaluación</h1>
+            <p class="text-gray-400 text-lg max-w-2xl mx-auto">Datos generales de aprobación y feedback anónimo sobre la administración actual.</p>
+        </header>
+
+        <div id="loader" class="flex justify-center items-center py-20">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-accent"></div>
+        </div>
+
+        <div id="dashboard" class="hidden space-y-12">
+            
+            <section class="bg-card rounded-2xl p-6 shadow-xl border border-gray-700">
+                <h2 class="text-2xl font-semibold text-white mb-6">¿Quiénes deberían poner orden a la administración?</h2>
+                <div class="relative h-80 w-full">
+                    <canvas id="ordenChart"></canvas>
+                </div>
+            </section>
+
+            <section>
+                <h2 class="text-2xl font-semibold text-white mb-6">Aprobación Individual y Feedback</h2>
+                <div id="admin-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    </div>
+            </section>
+
+        </div>
+    </div>
+
+    <script>
+        // URL pública exportada a CSV de tu Google Sheet
+        const sheetId = '1PwLM9V8EVoAuQaOuSC_s84fvCX3obu2Ueh83RcZpGsk';
+        const csvUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv`;
+
+        // Nombres basados en tus columnas (índices correspondientes en el CSV)
+        // Estructura: { nombre, index_aprobacion, index_feedback }
+        const administradores = [
+            { id: 'AR', name: 'AR', colAprob: 7, colFeedback: 8 },
+            { id: 'SARHAY', name: 'Sarhay', colAprob: 9, colFeedback: 10 },
+            { id: 'IVAN', name: 'Ivan Vargas', colAprob: 11, colFeedback: 12 },
+            { id: 'LIN', name: 'LIN', colAprob: 13, colFeedback: 14 },
+            { id: 'POLLO', name: 'Pollo', colAprob: 15, colFeedback: 16 },
+            { id: 'TAVO', name: 'Tavo', colAprob: 17, colFeedback: 18 },
+            { id: 'JOSE', name: 'Jose Diaz', colAprob: 19, colFeedback: 20 },
+            { id: 'RODRIGO', name: 'Rodrigo', colAprob: 21, colFeedback: 22 },
+        ];
+
+        // Índice de la pregunta "¿Quienes deberian poner orden a la administración?"
+        const colOrden = 27;
+
+        Papa.parse(csvUrl, {
+            download: true,
+            header: false,
+            complete: function(results) {
+                const data = results.data;
+                // Eliminar la fila 0 (Cabeceras)
+                data.shift(); 
+                
+                procesarDatos(data);
+            },
+            error: function(err) {
+                console.error("Error al cargar los datos:", err);
+                document.getElementById('loader').innerHTML = '<p class="text-red-500">Error al cargar los datos. Verifica que el enlace sea público.</p>';
+            }
+        });
+
+        function procesarDatos(rows) {
+            // Filtrar filas vacías
+            const validRows = rows.filter(row => row.length > 5);
+
+            // 1. Procesar "Quienes deberían poner orden"
+            const ordenVotes = {};
+            validRows.forEach(row => {
+                if(row[colOrden]) {
+                    // Separar por comas por si seleccionaron múltiples (checkboxes)
+                    const selecciones = row[colOrden].split(',').map(s => s.trim());
+                    selecciones.forEach(sel => {
+                        if(sel) {
+                            ordenVotes[sel] = (ordenVotes[sel] || 0) + 1;
+                        }
+                    });
+                }
+            });
+
+            renderOrdenChart(ordenVotes);
+
+            // 2. Procesar evaluaciones individuales
+            const grid = document.getElementById('admin-grid');
+            
+            administradores.forEach(admin => {
+                let si = 0;
+                let no = 0;
+                let feedbacks = [];
+
+                validRows.forEach(row => {
+                    const voto = (row[admin.colAprob] || '').trim().toLowerCase();
+                    if(voto === 'sí' || voto === 'si' || voto === 'yes') si++;
+                    if(voto === 'no') no++;
+
+                    const comentario = (row[admin.colFeedback] || '').trim();
+                    if(comentario && comentario.length > 2) {
+                        feedbacks.push(comentario);
+                    }
+                });
+
+                // Crear tarjeta
+                const card = document.createElement('div');
+                card.className = 'bg-card rounded-2xl p-5 shadow-lg border border-gray-700 flex flex-col';
+                
+                // Porcentaje de aprobación
+                const total = si + no;
+                const porcentaje = total > 0 ? Math.round((si / total) * 100) : 0;
+                const colorClase = porcentaje >= 50 ? 'text-green-400' : 'text-red-400';
+
+                card.innerHTML = `
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-xl font-bold text-white">${admin.name}</h3>
+                        <span class="text-sm font-bold px-2 py-1 bg-gray-800 rounded-md ${colorClase}">${porcentaje}% Aprob.</span>
+                    </div>
+                    <div class="relative w-full h-40 mb-4">
+                        <canvas id="chart-${admin.id}"></canvas>
+                    </div>
+                    <div class="mt-auto">
+                        <h4 class="text-sm text-gray-400 uppercase tracking-wide mb-2 font-semibold">Feedback Anónimo:</h4>
+                        <div class="space-y-2 max-h-32 overflow-y-auto scrollbar-thin pr-2">
+                            ${feedbacks.length > 0 ? feedbacks.map(f => `
+                                <div class="bg-gray-800 rounded p-2 text-sm text-gray-300">
+                                    "${f}"
+                                </div>
+                            `).join('') : '<p class="text-xs text-gray-500 italic">Sin comentarios</p>'}
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+
+                // Renderizar gráfica de dona
+                renderDoughnut(`chart-${admin.id}`, si, no);
+            });
+
+            // Ocultar loader y mostrar dashboard
+            document.getElementById('loader').classList.add('hidden');
+            document.getElementById('dashboard').classList.remove('hidden');
+        }
+
+        // --- Funciones de Chart.js ---
+
+        // Configuración global para gráficas oscuras
+        Chart.defaults.color = '#9CA3AF';
+        Chart.defaults.font.family = 'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont';
+
+        function renderOrdenChart(data) {
+            const ctx = document.getElementById('ordenChart').getContext('2d');
+            
+            // Ordenar de mayor a menor
+            const labels = Object.keys(data).sort((a, b) => data[b] - data[a]);
+            const values = labels.map(label => data[label]);
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Votos',
+                        data: values,
+                        backgroundColor: '#3B82F6',
+                        borderRadius: 4,
+                        barThickness: 'flex',
+                        maxBarThickness: 40
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: '#374151' },
+                            ticks: { stepSize: 1 }
+                        },
+                        x: {
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderDoughnut(canvasId, si, no) {
+            const ctx = document.getElementById(canvasId).getContext('2d');
+            
+            if (si === 0 && no === 0) {
+                // Estado vacío si nadie ha votado
+                si = 1; no = 1; 
+            }
+
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Sí', 'No'],
+                    datasets: [{
+                        data: [si, no],
+                        backgroundColor: ['#10B981', '#EF4444'],
+                        borderWidth: 0,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '70%',
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { boxWidth: 12, padding: 10 }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
