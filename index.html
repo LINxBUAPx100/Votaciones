@@ -40,7 +40,6 @@
             <h1 class="text-4xl md:text-5xl font-extrabold text-white tracking-tight mb-4">Resultados de Evaluación</h1>
             <p class="text-slate-400 text-lg max-w-2xl mx-auto">Análisis completo, feedback anónimo y propuestas sobre el estado actual de la administración.</p>
             
-            <!-- Contador de Votos -->
             <div class="mt-6 inline-flex items-center justify-center px-5 py-2 bg-slate-800/80 border border-slate-600 rounded-full shadow-lg backdrop-blur-sm">
                 <span class="relative flex h-3 w-3 mr-3">
                     <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-500 opacity-75"></span>
@@ -50,15 +49,23 @@
             </div>
         </header>
 
-        <!-- Loader -->
         <div id="loader" class="flex flex-col justify-center items-center py-20">
             <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-accent mb-4"></div>
             <p class="text-slate-400 animate-pulse">Analizando respuestas en tiempo real...</p>
         </div>
 
+        <div id="empty-state" class="hidden flex flex-col justify-center items-center py-20 text-center">
+            <div class="bg-slate-800 p-8 rounded-3xl border border-slate-700 shadow-2xl max-w-md">
+                <svg class="w-20 h-20 text-slate-600 mx-auto mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                </svg>
+                <h3 class="text-2xl font-bold text-white mb-2">Aún nadie ha votado</h3>
+                <p class="text-slate-400">Los resultados aparecerán aquí automáticamente en cuanto se registre la primera respuesta en el formulario.</p>
+            </div>
+        </div>
+
         <div id="dashboard" class="hidden space-y-16">
             
-            <!-- SECCIÓN 1: SATISFACCIÓN Y COMUNIDAD -->
             <section>
                 <div class="flex items-center mb-6">
                     <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center mr-3 shadow-lg shadow-blue-500/30">
@@ -94,19 +101,15 @@
                     </div>
                 </div>
 
-                <!-- Áreas de mejora -->
                 <div class="bg-card rounded-2xl shadow-lg border border-slate-700 p-6 mt-6">
                     <h3 class="text-lg text-white font-bold mb-4 flex items-center">
                         <svg class="w-5 h-5 mr-2 text-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                         Áreas principales que necesitan mejora
                     </h3>
-                    <div id="lista-mejoras" class="space-y-3 max-h-60 overflow-y-auto scrollbar-thin pr-2">
-                        <!-- Generado dinámicamente -->
-                    </div>
+                    <div id="lista-mejoras" class="space-y-3 max-h-60 overflow-y-auto scrollbar-thin pr-2"></div>
                 </div>
             </section>
 
-            <!-- SECCIÓN 2: PLANTILLA ACTUAL Y PERMANENCIA -->
             <section>
                 <div class="flex items-center mb-6">
                     <div class="w-8 h-8 bg-purple-500 rounded-lg flex items-center justify-center mr-3 shadow-lg shadow-purple-500/30">
@@ -115,20 +118,15 @@
                     <h2 class="text-3xl font-bold text-white">Plantilla Actual y Permanencia</h2>
                 </div>
 
-                <!-- Conformidad con plantilla general -->
                 <div class="bg-card p-6 rounded-2xl shadow-lg border border-slate-700 mb-8 max-w-2xl mx-auto">
                     <h3 class="text-center text-lg text-slate-300 font-semibold mb-4">¿Estás conforme con la plantilla de administración actual?</h3>
                     <div class="relative h-64 w-full"><canvas id="chart-conformeplantilla"></canvas></div>
                 </div>
 
-                <div id="admin-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                    <!-- Tarjetas de administradores (Ahora son 7) -->
-                </div>
+                <div id="admin-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
             </section>
 
-            <!-- SECCIÓN 3: ESTRUCTURA Y NUEVOS INTEGRANTES -->
             <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <!-- Integrar a alguien más -->
                 <div class="bg-card rounded-2xl p-6 shadow-lg border border-slate-700 flex flex-col">
                     <div class="flex items-center mb-6">
                         <div class="w-8 h-8 bg-teal-500 rounded-lg flex items-center justify-center mr-3 shadow-lg shadow-teal-500/30">
@@ -138,17 +136,11 @@
                     </div>
                     <div class="relative h-48 w-full mb-6"><canvas id="chart-integrar"></canvas></div>
                     <div class="mt-auto bg-slate-900/50 rounded-lg p-4 border border-slate-700/50">
-                        <h4 class="text-sm text-teal-400 font-bold mb-3 flex items-center">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-                            Candidatos propuestos:
-                        </h4>
-                        <ul id="lista-candidatos" class="space-y-2 max-h-40 overflow-y-auto scrollbar-thin text-sm text-slate-300">
-                            <!-- Lista dinámica -->
-                        </ul>
+                        <h4 class="text-sm text-teal-400 font-bold mb-3 flex items-center">Candidatos propuestos:</h4>
+                        <ul id="lista-candidatos" class="space-y-2 max-h-40 overflow-y-auto scrollbar-thin text-sm text-slate-300"></ul>
                     </div>
                 </div>
 
-                <!-- Quién debe poner orden -->
                 <div class="bg-card rounded-2xl p-6 shadow-lg border border-slate-700">
                     <div class="flex items-center mb-6">
                         <div class="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center mr-3 shadow-lg shadow-orange-500/30">
@@ -160,7 +152,6 @@
                 </div>
             </section>
 
-            <!-- SECCIÓN 4: OPINIONES ABIERTAS -->
             <section>
                 <div class="flex items-center mb-6">
                     <div class="w-8 h-8 bg-pink-500 rounded-lg flex items-center justify-center mr-3 shadow-lg shadow-pink-500/30">
@@ -168,23 +159,16 @@
                     </div>
                     <h2 class="text-3xl font-bold text-white">Opiniones Abiertas</h2>
                 </div>
-                <div id="grid-opiniones" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <!-- Generado dinámicamente -->
-                </div>
+                <div id="grid-opiniones" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
             </section>
 
         </div>
     </div>
 
     <script>
-        // EL NUEVO ID DEL SHEET 
         const sheetId = '1xDIQTAbBDIBuOeErIQSY4KHTHFScy_VZl6-p3a9dpBY';
         const csvUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv`;
 
-        Chart.defaults.color = '#94a3b8'; 
-        Chart.defaults.font.family = 'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont';
-
-        // Variables globales para mapear las columnas dinámicamente
         let col = {};
         let adminsMap = [];
 
@@ -193,11 +177,12 @@
             header: false,
             complete: function(results) {
                 const data = results.data;
-                
-                // --- MAPEO DINÁMICO DE COLUMNAS ---
-                // Esto lee la fila 0 (preguntas) y encuentra el índice sin importar el orden
+                if (!data || data.length < 1) {
+                    mostrarVacio();
+                    return;
+                }
+
                 const headers = data[0];
-                
                 headers.forEach((h, index) => {
                     let text = h.toLowerCase();
                     if(text.includes('responsabilidad')) col.responsabilidad = index;
@@ -216,31 +201,36 @@
                     else if(text === 'opinion 3') col.op3 = index;
                 });
 
-                // Mapeo dinámico de administradores (Busca a los 7 actuales)
                 const adminNames = ['AR', 'SARHAY', 'IVAN VARGAS', 'LIN', 'POLLO', 'TAVO', 'RODRIGO'];
-                adminsMap = adminNames.map(name => {
-                    return {
-                        id: name.replace(/\s+/g, ''),
-                        name: name,
-                        colAprob: headers.findIndex(h => h.includes(name) && h.includes('continuar')),
-                        colFeedback: headers.findIndex(h => h.includes(name) && (h.includes('porque') || h.includes('permanecer')))
-                    }
-                }).filter(a => a.colAprob !== -1); // Filtra por seguridad si alguno no se encuentra
+                adminsMap = adminNames.map(name => ({
+                    id: name.replace(/\s+/g, ''),
+                    name: name,
+                    colAprob: headers.findIndex(h => h.includes(name) && h.includes('continuar')),
+                    colFeedback: headers.findIndex(h => h.includes(name) && (h.includes('porque') || h.includes('permanecer')))
+                })).filter(a => a.colAprob !== -1);
 
-                // Quitar cabecera y filtrar filas válidas
                 data.shift(); 
-                const validRows = data.filter(row => row.length > 5 && row[col.responsabilidad]); // Asegurar que tengan datos
+                const validRows = data.filter(row => row.length > 5 && row[col.responsabilidad]);
                 
                 document.getElementById('total-votos').innerText = validRows.length;
-                procesarDatos(validRows);
+
+                if (validRows.length === 0) {
+                    mostrarVacio();
+                } else {
+                    procesarDatos(validRows);
+                }
             },
-            error: function(err) {
+            error: function() {
                 document.getElementById('loader').innerHTML = '<p class="text-red-500 font-bold p-4 bg-red-900/50 rounded-lg">Error de conexión. Verifica que el Google Sheet esté "Publicado en la Web".</p>';
             }
         });
 
+        function mostrarVacio() {
+            document.getElementById('loader').classList.add('hidden');
+            document.getElementById('empty-state').classList.remove('hidden');
+        }
+
         function procesarDatos(rows) {
-            // Helpers
             const getFreq = (idx) => rows.reduce((acc, row) => {
                 if(idx === undefined) return acc;
                 let val = (row[idx] || '').trim();
@@ -269,7 +259,6 @@
                 return texts;
             };
 
-            // --- 1. Gráficas Generales ---
             renderPieChart('chart-responsabilidad', getFreq(col.responsabilidad), ['#3b82f6', '#ef4444', '#f59e0b', '#64748b']);
             renderBarChart('chart-transparencia', getFreq(col.transparencia), '#8b5cf6', false);
             renderPieChart('chart-participacion', getFreq(col.participacion), ['#3b82f6', '#8b5cf6', '#f59e0b', '#ef4444']);
@@ -278,53 +267,32 @@
             renderPieChart('chart-masparticipacion', getFreq(col.mas_participacion), ['#f59e0b', '#64748b']);
             renderPieChart('chart-conformeplantilla', getFreq(col.conforme_plantilla), ['#10b981', '#ef4444', '#64748b']);
 
-            // Lista de mejoras
             const areasMejora = getTexts(col.mejoras);
             document.getElementById('lista-mejoras').innerHTML = areasMejora.length ? 
                 areasMejora.map(t => `<div class="bg-slate-800/50 p-3 rounded border-l-4 border-warning text-sm">${t}</div>`).join('') : 
                 '<p class="text-slate-500">Sin datos registrados.</p>';
 
-            // --- 2. Evaluación Individual (Admins) ---
             const grid = document.getElementById('admin-grid');
             adminsMap.forEach(admin => {
                 let si = 0, no = 0, anulo = 0, feedbacks = [];
                 rows.forEach(row => {
                     const voto = (row[admin.colAprob] || '').trim().toLowerCase();
-                    if(voto === 'sí' || voto === 'si' || voto === 'yes') si++;
+                    if(voto === 'sí' || voto === 'si') si++;
                     else if(voto === 'no') no++;
                     else if(voto.includes('anulo')) anulo++;
-
                     const comentario = (row[admin.colFeedback] || '').trim();
-                    if(comentario && comentario.length > 2) feedbacks.push(comentario);
+                    if(comentario.length > 2) feedbacks.push(comentario);
                 });
 
                 const totalValidos = si + no;
                 const porcentaje = totalValidos > 0 ? Math.round((si / totalValidos) * 100) : 0;
-                let colorPorcentaje = porcentaje >= 50 ? 'text-success' : 'text-danger';
-                if(totalValidos === 0) colorPorcentaje = 'text-slate-400';
-
                 const card = document.createElement('div');
-                card.className = 'bg-card rounded-2xl p-5 shadow-lg border border-slate-700 flex flex-col hover:border-slate-500 transition-colors duration-300';
-                card.innerHTML = `
-                    <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-700/50">
-                        <h3 class="text-lg font-bold text-white">${admin.name}</h3>
-                        <span class="text-xs font-bold px-2 py-1 bg-slate-800 rounded-md ${colorPorcentaje}">${porcentaje}% Aprob.</span>
-                    </div>
-                    <div class="relative w-full h-32 mb-5">
-                        <canvas id="chart-${admin.id}"></canvas>
-                    </div>
-                    <div class="mt-auto bg-slate-900/50 rounded-lg p-3">
-                        <h4 class="text-xs text-slate-400 uppercase tracking-wide mb-2 font-semibold">Feedback:</h4>
-                        <div class="space-y-2 max-h-32 overflow-y-auto scrollbar-thin pr-2">
-                            ${feedbacks.length > 0 ? feedbacks.map(f => `<div class="bg-slate-800 rounded p-2 text-xs italic text-slate-300 border-l-2 border-slate-600">"${f}"</div>`).join('') : '<p class="text-xs text-slate-500">Sin comentarios</p>'}
-                        </div>
-                    </div>
-                `;
+                card.className = 'bg-card rounded-2xl p-5 shadow-lg border border-slate-700 flex flex-col hover:border-slate-500 transition-colors';
+                card.innerHTML = `<div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-700/50"><h3 class="text-lg font-bold text-white">${admin.name}</h3><span class="text-xs font-bold px-2 py-1 bg-slate-800 rounded-md ${porcentaje >= 50 ? 'text-success' : 'text-danger'}">${porcentaje}% Aprob.</span></div><div class="relative w-full h-32 mb-5"><canvas id="chart-${admin.id}"></canvas></div><div class="mt-auto bg-slate-900/50 rounded-lg p-3"><h4 class="text-xs text-slate-400 uppercase font-semibold mb-2">Feedback:</h4><div class="space-y-2 max-h-32 overflow-y-auto scrollbar-thin pr-2">${feedbacks.length > 0 ? feedbacks.map(f => `<div class="bg-slate-800 rounded p-2 text-xs italic text-slate-300 border-l-2 border-slate-600">"${f}"</div>`).join('') : '<p class="text-xs text-slate-500">Sin comentarios</p>'}</div></div>`;
                 grid.appendChild(card);
                 renderAdminChart(`chart-${admin.id}`, si, no, anulo);
             });
 
-            // --- 3. Integración y Orden ---
             renderPieChart('chart-integrar', getFreq(col.integrar), ['#14b8a6', '#ef4444']);
             renderBarChart('chart-orden', getCommaFreq(col.orden), '#f97316', true);
 
@@ -333,43 +301,30 @@
                 candidatos.map(c => `<li class="bg-slate-800 px-3 py-2 rounded shadow-sm border border-slate-700 flex items-center"><span class="w-2 h-2 rounded-full bg-teal-500 mr-2"></span>${c}</li>`).join('') :
                 '<li>No hay propuestas aún.</li>';
 
-            // --- 4. Opiniones Abiertas ---
             const opiniones = getTexts(col.op1, col.op2, col.op3);
             const opGrid = document.getElementById('grid-opiniones');
-            if(opiniones.length === 0) {
-                opGrid.innerHTML = '<p class="text-slate-500 col-span-full text-center py-10">Aún no hay opiniones generales registradas.</p>';
-            } else {
+            if(opiniones.length > 0) {
                 opiniones.forEach(op => {
                     const div = document.createElement('div');
-                    div.className = 'glass-card p-5 rounded-xl border border-slate-700 shadow-md text-slate-300 relative overflow-hidden group hover:border-pink-500/50 transition-colors';
-                    div.innerHTML = `
-                        <svg class="absolute top-2 left-2 w-8 h-8 text-slate-700/30 transform -scale-x-100 group-hover:text-pink-500/10 transition-colors" fill="currentColor" viewBox="0 0 24 24"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/></svg>
-                        <p class="relative z-10 text-sm leading-relaxed pt-2 pl-2">${op}</p>
-                    `;
+                    div.className = 'glass-card p-5 rounded-xl border border-slate-700 shadow-md text-slate-300 group hover:border-pink-500/50 transition-colors';
+                    div.innerHTML = `<p class="text-sm leading-relaxed">${op}</p>`;
                     opGrid.appendChild(div);
                 });
+            } else {
+                opGrid.innerHTML = '<p class="text-slate-500 col-span-full text-center py-10">Aún no hay opiniones generales registradas.</p>';
             }
 
-            // Mostrar el dashboard
             document.getElementById('loader').classList.add('hidden');
             document.getElementById('dashboard').classList.remove('hidden');
         }
 
-        // --- Funciones de renderizado ---
         function renderPieChart(id, data, colors) {
             const keys = Object.keys(data);
             if(keys.length === 0 || !document.getElementById(id)) return;
             new Chart(document.getElementById(id).getContext('2d'), {
                 type: 'doughnut',
-                data: {
-                    labels: keys,
-                    datasets: [{ data: Object.values(data), backgroundColor: colors, borderWidth: 0 }]
-                },
-                options: {
-                    responsive: true, maintainAspectRatio: false,
-                    cutout: '65%',
-                    plugins: { legend: { position: 'right', labels: { color: '#cbd5e1', font: {size: 11} } } }
-                }
+                data: { labels: keys, datasets: [{ data: Object.values(data), backgroundColor: colors, borderWidth: 0 }] },
+                options: { responsive: true, maintainAspectRatio: false, cutout: '65%', plugins: { legend: { position: 'right', labels: { color: '#cbd5e1', font: {size: 11} } } } }
             });
         }
 
@@ -379,35 +334,17 @@
             if(keys.length === 0 || !document.getElementById(id)) return;
             new Chart(document.getElementById(id).getContext('2d'), {
                 type: 'bar',
-                data: {
-                    labels: keys,
-                    datasets: [{ label: 'Votos', data: keys.map(k => data[k]), backgroundColor: color, borderRadius: 4 }]
-                },
-                options: {
-                    responsive: true, maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        y: { beginAtZero: true, ticks: { stepSize: 1, color: '#94a3b8' }, grid: { color: '#334155' } },
-                        x: { ticks: { color: '#cbd5e1' }, grid: { display: false } }
-                    }
-                }
+                data: { labels: keys, datasets: [{ label: 'Votos', data: keys.map(k => data[k]), backgroundColor: color, borderRadius: 4 }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1, color: '#94a3b8' }, grid: { color: '#334155' } }, x: { ticks: { color: '#cbd5e1' }, grid: { display: false } } } }
             });
         }
 
         function renderAdminChart(id, si, no, anulo) {
             if(!document.getElementById(id)) return;
-            if(si === 0 && no === 0 && anulo === 0) { si=1; no=1; anulo=1; }
             new Chart(document.getElementById(id).getContext('2d'), {
                 type: 'doughnut',
-                data: {
-                    labels: ['Sí', 'No', 'Anulado'],
-                    datasets: [{ data: [si, no, anulo], backgroundColor: ['#10b981', '#ef4444', '#64748b'], borderWidth: 0 }]
-                },
-                options: {
-                    responsive: true, maintainAspectRatio: false,
-                    cutout: '70%',
-                    plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, padding: 8, color: '#cbd5e1', font: {size: 10} } } }
-                }
+                data: { labels: ['Sí', 'No', 'Anulado'], datasets: [{ data: [si, no, anulo], backgroundColor: ['#10b981', '#ef4444', '#64748b'], borderWidth: 0 }] },
+                options: { responsive: true, maintainAspectRatio: false, cutout: '70%', plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, padding: 8, color: '#cbd5e1', font: {size: 10} } } } }
             });
         }
     </script>
